@@ -1,0 +1,13 @@
+asdfas
+#if($system.variables["sponsor.isEnabled"] != nil && $system.variables["sponsor.isEnabled"] == "true"):
+<div class="content t:center m:v:xl">
+    <hr class="m:v:xl">
+    <div id="share" class="m">
+        <img class="s:w256 m:h:auto" src="#($system.variables["sponsor.image.url"])" alt="#($system.variables["sponsor.image.alt"])">
+        <h3>#($system.variables["sponsor.title"])</h3>
+        <p>#($system.variables["sponsor.description"])</p>
+        <a class="block m:b" href="#($system.variables["sponsor.button.url"])" target="_blank">#($system.variables["sponsor.button.title"])</a>
+        <a class="t:size:xs m:t" href="#($system.variables["sponsor.more.url"])">#($system.variables["sponsor.more.title"])</a>
+    </div>
+</div>
+#endif

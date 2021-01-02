@@ -1,0 +1,36 @@
+#let(form = [
+    "id": formId,
+    "token": formToken,
+    "title": "Feed",
+    "key": "aggregator.feeds",
+    "multipart": true,
+    "modelId": modelId,
+    "list": [
+        "title": "Feeds",
+        "url": "/admin/aggregator/feeds/"
+    ]
+])
+
+#define(toolbarRightBefore):
+    #if((modelId != nil) && UserHasPermission("aggregator.feed.items.list")):
+    <a href="/admin/aggregator/feeds/#(modelId)/items/">#svg("rss")</a>
+    #endif
+#enddefine
+
+#define(fields):
+    #var(field = nil)
+
+    #(field = ["id": "image", "class": "circular", "data": fields.image, "required": true, "accept": "image/jpeg"])
+    #inline("Admin/Fields/File")
+
+    #(field = ["id": "title", "required": true, "data": fields.title])
+    #inline("Admin/Fields/Text")
+    
+    #(field = ["id": "url", "required": true, "data": fields.url])
+    #inline("Admin/Fields/Text")
+
+#enddefine
+
+#inline("Admin/Form")
+
+

@@ -1,0 +1,38 @@
+#let(head = [
+    "title": $system.variables["aggregator.page.title"],
+    "description": $system.variables["aggregator.page.description"],
+    "css": metadata.css,
+    "js": metadata.js
+])
+#define(body):
+<div id="feed-items" class="m">
+    <header class="t:center">
+        <h1 class="m:t">#(head.title)</h1>
+        <p>#(head.description)</p>
+    </header>
+
+    <div class="w:xl m:h:auto">
+        #for(group in groups):
+            #let(dateString = Date(timeStamp: group.day, fixedFormat: $app.dateFormats.date, timeZone: $app.timezone))
+            #let(dayString = Date(timeStamp: group.day, fixedFormat: "EEEE", timeZone: $app.timezone))
+        <div class="group">
+            <header>
+                <h2 class="m:b:zero">#(dayString)</h2>
+                <p class="m:t:zero c:text:tertiary"><span>#(group.items.count()) item#if(group.items.count() != 1):s#endif</span> &middot; #(dateString)</p>
+            </header>
+            <section>
+            #for(item in group.items):
+                <article class="container c:background:secondary m:h:zero m:b:s r:xs p">
+                    <img src="#(item.feed.imageKey.resolve())" alt="#(item.title)" class="s64 r:circular c:border:primary">
+                    <h5 class="m:zero">#(item.feed.title)</h5>
+                    <h3 class="m:zero"><a href="#(item.url)" target="_blank">#(item.title)</a></h3>
+                </article>
+            #endfor
+            </section>
+        </div>
+        #endfor
+    </div>
+
+</div>
+#enddefine
+#inline("Frontend/Index")

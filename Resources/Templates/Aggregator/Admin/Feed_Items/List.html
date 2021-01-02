@@ -1,0 +1,72 @@
+#let(table = [
+    "title": "Feed items",
+    "key": "aggregator.feed.items",
+    "create": false
+])
+
+#var(columns = "1fr 200px")
+#var(actions = 0)
+
+#if(UserHasPermission("aggregator.feed.items.update")):
+    #(columns += " 96px")
+    #(actions += 1)
+#endif
+
+#define(css):
+tr {
+    grid-template-columns: 1fr;
+}
+@media (min-width: 600px) {
+    tr {
+        grid-template-columns: #(columns);
+    }
+}
+#enddefine
+
+#define(toolbarRight):
+    <a href="#($req.url.path.trimLast())">#svg("rss")</a>
+#enddefine
+
+#define(breadcrumb):
+    <li><a href="#($req.url.path.trimLast(2))">Feeds</a></li>
+#enddefine
+
+
+#define(th):
+    #var(link = nil)
+    <th class="td:left m:h:s td:compact:hidden">URL</th>
+    <th class="td:center td:compact:hidden">Date</th>
+
+    #if(UserHasPermission(table.key + ".update")):
+    <th class="td:center td:compact:hidden">Visibility</th>
+    #endif
+
+#enddefine
+
+#define(tr):
+    #for(item in list.items):
+    <tr>
+        
+        <td class="td:left m:h:s">
+            <a href="#(item.url)" target="_blank">#(item.title)</a>
+        </td>
+
+        <td class="td:center td:compact:separator">
+            #Date(timeStamp: item.date, fixedFormat: $app.dateFormats.date, timeZone: $app.timezone)
+        </td>
+
+        #if(UserHasPermission(table.key + ".update")):
+        <td class="td:center">
+            <a id="#(item.id)" href="#($req.url.path)#(item.id)/toggle/">
+                #if(item.visibility == "visible"):#svg("eye")#else:#svg("eye-off")#endif
+            </a>
+        </td>
+        #endif
+    </tr>
+    #endfor
+#enddefine
+
+#inline("Admin/BaseTable")
+
+
+

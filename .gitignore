@@ -6,11 +6,6 @@ DerivedData/
 .DS_Store
 db.sqlite
 .swiftpm
-.env
-.env.development
-.env.testing
-Public
-Resources
 ./feather
 docker/datadir
 ssh
