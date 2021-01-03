@@ -9,3 +9,4 @@ db.sqlite
 ./feather
 docker/datadir
 ssh
+tmp/
