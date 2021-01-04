@@ -1,10 +1,17 @@
 # Steps to setup Feather, in Docker using sqlite with an Nginx reverse proxy, SSL using LetsEncrypt on Ubuntu (Testest on Digital Ocean)
 # Steps not tested in order yet, may do that but I'm not promising. I may also snapshot the build Droplet and just copy what I want to a small Droplet without the build tools, not sure yet.
 # Note if you are building you might want to size your Droplet up for the build process and then size it back down when you are done. I think you can scale within a category without issue
-# on Digital Ocean.
+# on Digital Ocean. Initially create the size you want then you can resize without changing the disk size and if you do it that way you can change back down after the build.
 
 apt-get update
 apt-get upgrade
+
+apt install nginx ufw docker.io
+
+ufw allow http
+ufw allow https
+ufw allow ssh
+ufw enable
 
 # Digital Ocean monitoring tools
 curl -sSL https://repos.insights.digitalocean.com/install.sh | bash
@@ -15,10 +22,10 @@ server {
     server_name test.human-friendly.com;
     listen 80;
 
-		# Uncomment this if the Feather app is only handling a some subtree of URLs
+        # Uncomment this if the Feather app is only handling a some subtree of URLs
     #root /home/vapor/Hello/Public/;
 
-		# Use a specific location if Feather is only covering some URLs
+        # Use a specific location if Feather is only covering some URLs
     location / {
         proxy_pass http://127.0.0.1:8080;
         proxy_pass_header Server;
@@ -33,16 +40,20 @@ server {
 ```
 service nginx restart
 
-apt install docker.io
 docker build .
 # Create a Docker volume
 docker volume create hfwebsite
 docker volume inspect hfwebsite
 # Copy in db.sqlite, Public and Resources to the directory holding the volume ensure read write permissions to all users or they will be generated fresh. Keep this content backed up.
+# Copy from relevant place for you
+cd /var/lib/docker/volumes/hfwebsite/_data
+chmod -R a+rw .
+# You may also have to check the index bit is correct on the directories
 
 # Use docker image ID from build - Should be the smaller non Swift one from this command
 docker images
-docker run --restart unless-stopped -dp 8080:8080 -v hfwebsite:/var/feather:rw a4a446f0cafb
+docker run --restart unless-stopped -dp 8080:8080 -v hfwebsite:/var/feather:rw -e BASE_URL="/" 62f4e4613dfd
+#a4a446f0cafb
 systemctl enable docker
 
 
@@ -56,64 +67,3 @@ systemctl  list-timers
 
 # When everything is running well you may want to remove stopped containers
 docker rm $(docker ps -a -q)
-
-
-
-##### Rest should not be needed at all Pre-requisites for Swift - Not needed with Docker approach 
-apt-get install \
-          binutils \
-          git \
-          gnupg2 \
-          libc6-dev \
-          libcurl4 \
-          libedit2 \
-          libgcc-9-dev \
-          libsqlite3-0 \
-          libpython2.7 \
-          libstdc++-9-dev \
-          libxml2 \
-          libz3-dev \
-          pkg-config \
-          tzdata \
-          zlib1g-dev
-
-ufw allow ssh
-ufw allow http
-ufw allow https
-ufw status
-ufw enable
-
-apt install nginx make libxml2-dev libsqlite3-dev sqlite3 snap
-
-# First time only - You sould get this from the Swift website not trust my copy of it.
-# gpg --keyserver hkp://pool.sks-keyservers.net \
-      --recv-keys \
-      '7463 A81A 4B2E EA1B 551F  FBCF D441 C977 412B 37AD' \
-      '1BE1 E29A 084C B305 F397  D62A 9F59 7F4D 21A5 6D5F' \
-      'A3BA FD35 56A5 9079 C068  94BD 63BC 1CFE 91D3 06C6' \
-      '5E4D F843 FB06 5D7F 7E24  FBA2 EF54 30F0 71E1 B235' \
-      '8513 444E 2DA3 6B7C 1659  AF4D 7638 F1FB 2B2B 08C4' \
-      'A62A E125 BBBF BB96 A6E0  42EC 925C C1CC ED3D 1561' \
-      '8A74 9566 2C3C D4AE 18D9  5637 FAF6 989E 1BC1 6FEA'
-
-# Update version downloaded
- wget https://swift.org/builds/swift-5.3.2-release/ubuntu2004/swift-5.3.2-RELEASE/swift-5.3.2-RELEASE-ubuntu20.04.tar.gz
- wget https://swift.org/builds/swift-5.3.2-release/ubuntu2004/swift-5.3.2-RELEASE/swift-5.3.2-RELEASE-ubuntu20.04.tar.gz.sig
- gpg --keyserver hkp://pool.sks-keyservers.net --refresh-keys Swift
-
- mv swift-5.3.2-RELEASE-ubuntu20.04/usr .
-
-#Local Copy the Feather folder from local if you have modifications, otherwise you could just checkout / download from Github.
- #scp -r feather/ root@138.68.69.33:hfwebsite
-
-cd hfwebsite
-echo 'BASE_URL="http://www.human-friendly.com"' > .env
-echo 'BASE_PATH="$(CUR_DIR)/"' >> .env
-
-# I haven't actually tried these yet. Did everything as root in first pass and may not be necessary with Docker
-adduser vapor
-usermod -aG sudo vapor
-rsync --archive --chown=vapor:vapor ~/.ssh /home/vapor
-
- swift build -c release --enable-test-discovery
-install .build/release/Feather ./feather
