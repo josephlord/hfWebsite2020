@@ -52,7 +52,7 @@ chmod -R a+rw .
 
 # Use docker image ID from build - Should be the smaller non Swift one from this command
 docker images
-docker run --restart unless-stopped -dp 8080:8080 -v hfwebsite:/var/feather:rw -e BASE_URL="/" 62f4e4613dfd
+docker run --restart unless-stopped -dp 8080:8080 -v hfwebsite:/var/feather:rw -e BASE_URL="https://www.human-friendly.com" 62f4e4613dfd
 #a4a446f0cafb
 systemctl enable docker
 
