@@ -106,6 +106,7 @@ try feather.configure(database: dbconfig,
                         SponsorBuilder(),
                         SwiftyBuilder(),
                         MarkdownBuilder(),
+                        PromoCodeBuilder(),
                       ],
                       usePublicFileMiddleware: middleWare)
 
