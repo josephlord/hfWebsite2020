@@ -7,13 +7,39 @@
 
 import FeatherCore
 
+extension FormField where Value == String {
+
+    private static let dateFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.dateFormat = "y-mm-d"
+        return f
+    }()
+    
+    var dateValue: Date? {
+        get {
+            self.value.flatMap { Self.dateFormatter.date(from: $0) }
+        }
+        set {
+            self.value = newValue.flatMap { Self.dateFormatter.string(from: $0) } ?? ""
+        }
+    }
+    
+    static func isValidDate(field: FormField<String>) -> Bool {
+        field.value != nil
+    }
+}
+
 final class PromoOfferEditForm: ModelForm {
     typealias Model = PromoOfferModel
     
     var modelId: UUID?
     var name = FormField<String>(key: "name").required().length(max: 250)
     var description = FormField<String>(key: "description").required()
-    var expiry = FormField<Date>(key: "expiry")
+    var expiry: FormField<String> = {
+        let field = FormField<String>(key: "expiry").length(max: 20)
+        field.validators = [FormField<String>.isValidDate]
+        return field
+    }()
     var notification: String?
     var codeCount: Int?
     
@@ -53,13 +79,13 @@ final class PromoOfferEditForm: ModelForm {
     func read(from input: Model)  {
         name.value = input.name
         description.value = input.description
-        expiry.value = input.expiry
+        expiry.dateValue = input.expiry
     }
     
     func write(to output: Model) {
         output.name = name.value!
         output.description = description.value ?? ""
-        output.expiry = expiry.value ?? Date()
+        output.expiry = expiry.dateValue ?? Date()
     }
 
     func willSave(req: Request, model: Model) -> EventLoopFuture<Void> {
