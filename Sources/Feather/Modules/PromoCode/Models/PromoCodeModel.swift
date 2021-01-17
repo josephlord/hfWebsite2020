@@ -17,7 +17,7 @@ final class PromoCodeModel: ViperModel {
 
     struct FieldKeys {
         static var code: FieldKey { "code" }
-        static var offer: FieldKey { " offer_id" }
+        static var offer: FieldKey { "offer_id" }
     }
     
     @Parent(key: FieldKeys.offer) var offer: PromoOfferModel

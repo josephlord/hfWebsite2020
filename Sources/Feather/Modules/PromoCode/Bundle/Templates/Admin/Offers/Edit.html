@@ -1,13 +1,13 @@
 #let(form = [
     "id": formId,
     "token": formToken,
-    "title": "Post",
+    "title": "Offer",
     "key": "promo.offers",
     "modelId": modelId,
     "multipart": true,
     "list": [
         "title": "Offers",
-        "url": "/admin/blog/posts/"
+        "url": "/admin/promo/offers/"
     ]
 ])
 
@@ -23,13 +23,13 @@
     #(field = ["id": "name", "required": true, "data": fields.name])
     #inline("Admin/Fields/Text")
 
-    #(field = ["id": "description", "size": "m", "data": fields.excerpt])
+    #(field = ["id": "description", "size": "m", "data": fields.description])
     #inline("Admin/Fields/Textarea")
 
-    #(field = ["id": "expiry", "size": "s", "data": fields.content])
-    #inline("Admin/Fields/TextArea")
-
-
+    #if(1 == 2):
+        #(field = ["id": "expiry", "size": "s", "data": fields.expiry])
+        #inline("Admin/Fields/Text")
+    #endif
 #enddefine
 
 #inline("Admin/Form")

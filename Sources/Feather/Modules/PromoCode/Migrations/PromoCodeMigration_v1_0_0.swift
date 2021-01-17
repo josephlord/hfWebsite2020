@@ -20,9 +20,11 @@ struct PromoCodeMigration_v1_0_0: Migration {
                 .unique(on: "name")
                 .create(),
             db.schema("promo_codes")
-                .field("code", .string, .identifier(auto: false))
-                .field("offer", .uuid, .references("promo_offers", "id"))
-                .foreignKey("offer", references: "promo_offers", "id", onDelete: .cascade, onUpdate: .cascade, name: "promo_offer_fk")
+                .id()
+                .field("code", .string)
+                .field("offer_id", .uuid, .references("promo_offers", "id"))
+                .foreignKey("offer_id", references: "promo_offers", "id", onDelete: .cascade, onUpdate: .cascade, name: "promo_offer_fk")
+                .unique(on: "code")
                 .create(),
         ])
     }

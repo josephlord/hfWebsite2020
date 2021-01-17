@@ -54,6 +54,7 @@ final class PromoOfferEditForm: ModelForm {
             "modelId" : modelId?.encodeToLeafData() ?? .string(nil),
             "fields" : fieldsLeafData,
             "metadata" : metadata?.leafData,
+            "notification" : .string(notification),
         ])
     }
         
@@ -67,7 +68,8 @@ final class PromoOfferEditForm: ModelForm {
             codeCountfuture = PromoCodeModel
                 .query(on: req.db)
                 .join(parent: \.$offer)
-                .filter(PromoOfferModel.self, \.$id == id).count()
+//                .filter(PromoOfferModel.self, \.$id == id)
+                .count()
                 .map { [unowned self] in codeCount = $0 }
         }
         return req.eventLoop.flatten([
