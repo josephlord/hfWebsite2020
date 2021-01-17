@@ -8,11 +8,12 @@
 import Vapor
 import Fluent
 import ViperKit
+import FeatherCore
 
 final class PromoOfferModel: ViperModel {
     typealias Module = PromoCodeModule
 
-    static let name = "promo_offers"
+    static let name = "offers"
 
     struct FieldKeys {
         static var name: FieldKey { "name" }
@@ -26,10 +27,12 @@ final class PromoOfferModel: ViperModel {
     @Field(key: FieldKeys.name) var name: String
     @Field(key: FieldKeys.description) var description: String
     @Field(key: FieldKeys.expiry) var expiry: Date
+    @Children(for: \.$offer)
+    var codes: [PromoCodeModel]
 
     init() { }
 
-    init(id: PromoCodeModel.IDValue? = nil,
+    init(id: UUID? = nil,
          name: String,
          description: String,
          expiry: Date)
@@ -38,5 +41,23 @@ final class PromoOfferModel: ViperModel {
         self.name = name
         self.description = description
         self.expiry = expiry
+    }
+}
+
+extension PromoOfferModel : MetadataRepresentable {
+    var metadata: Metadata {
+        .init(slug: (Self.name + "/" + name).slugify(), title: name, excerpt: description, date: expiry)
+    }
+}
+
+extension PromoOfferModel: LeafDataRepresentable{
+    var leafData: LeafData {
+        .dictionary([
+            "id": id,
+            "name": name,
+            "description": description,
+            "expiry": expiry,
+            "codeCount": codes.count
+        ])
     }
 }

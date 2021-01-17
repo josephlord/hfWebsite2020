@@ -8,11 +8,12 @@
 import Vapor
 import Fluent
 import ViperKit
+import FeatherCore
 
 final class PromoCodeModel: ViperModel {
     typealias Module = PromoCodeModule
     
-    static let name = "promo_codes"
+    static let name = "codes"
 
     struct FieldKeys {
         static var code: FieldKey { "code" }
@@ -35,5 +36,11 @@ final class PromoCodeModel: ViperModel {
         self.id = id
         self.code = code
         self.$offer.id = offerId
+    }
+}
+
+extension PromoCodeModel : MetadataRepresentable {
+    var metadata: Metadata {
+        .init(title: code, date: offer.expiry, feedItem: false)
     }
 }

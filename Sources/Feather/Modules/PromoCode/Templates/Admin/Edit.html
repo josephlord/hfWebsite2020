@@ -1,0 +1,35 @@
+#let(form = [
+    "id": formId,
+    "token": formToken,
+    "title": "Post",
+    "key": "promo.offers",
+    "modelId": modelId,
+    "multipart": true,
+    "list": [
+        "title": "Offers",
+        "url": "/admin/blog/posts/"
+    ]
+])
+
+#define(toolbarRightBefore):
+    #if(metadata != nil):
+    <a href="/admin/frontend/metadatas/#(metadata.id)/update/">#svg("feather")</a>
+    #endif
+#enddefine
+
+#define(fields):
+    #var(field = nil)
+
+    #(field = ["id": "name", "required": true, "data": fields.name])
+    #inline("Admin/Fields/Text")
+
+    #(field = ["id": "description", "size": "m", "data": fields.excerpt])
+    #inline("Admin/Fields/Textarea")
+
+    #(field = ["id": "expiry", "size": "s", "data": fields.content])
+    #inline("Admin/Fields/TextArea")
+
+
+#enddefine
+
+#inline("Admin/Form")
