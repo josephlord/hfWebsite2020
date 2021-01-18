@@ -1,9 +1,9 @@
 #let(detail = [
-    "title": "Post",
+    "title": "Offer",
     "key": "blog.posts",
     "list": [
-        "title": "Posts",
-        "url": "/admin/blog/posts/"
+        "title": "Offers",
+        "url": "/admin/promo/offers/"
     ]
 ])
 #define(details):
@@ -12,14 +12,14 @@
         <dd class="m:h:zero m:b">#(model.id)</dd>
 
         
-        <dt>Title</dt>
+        <dt>Name</dt>
         <dd class="m:h:zero m:b">#(model.name)</dd>
 
-        <dt>Excerpt</dt>
+        <dt>Description</dt>
         <dd class="m:h:zero m:b">#(model.description)</dd>
 
         <dt>Content</dt>
-        <dd class="m:h:zero m:b">#(model.expiry.description)</dd>
+        <dd class="m:h:zero m:b">#Date(timeStamp: model.expiry, fixedFormat: $app.dateFormats.full, timeZone: $app.timezone)</dd>
 
     </dl>
 #enddefine
