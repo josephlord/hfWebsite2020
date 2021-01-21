@@ -40,13 +40,14 @@ final class PromoOfferEditForm: ModelForm {
         field.validators = [FormField<String>.isValidDate]
         return field
     }()
+    var codes = FormField<String>(key: "addCodes")
     var notification: String?
     var codeCount: Int?
     
     var metadata: Metadata?
     
     var fields: [FormFieldRepresentable] {
-        [name, description, expiry]
+        [name, description, expiry, codes]
     }
     
     var leafData: LeafData {
@@ -95,7 +96,24 @@ final class PromoOfferEditForm: ModelForm {
     }
     
     func didSave(req: Request, model: Model) -> EventLoopFuture<Void> {
-        return req.eventLoop.future()
+        var future = req.eventLoop.future()
+        
+        guard let modelId = model.id else { return future }
+        let codesToAdd = codes.value?.split(separator: ",")
+            .filter { !$0.isEmpty }
+            .map { String($0) } ?? []
+            //.map { PromoCodeModel(code: $0, offer: model.id)}
+//        if !codesToAdd.isEmpty {
+//            future = req.eventLoop.flatten([
+//                output.$codes.create(codesToAdd, on: req.db)
+//            ])
+//        }
+//        let models = codesToAdd.map { PromoCodeModel(code: $0, offerId: modelId) }
+        return future.flatMap {
+            req.eventLoop.flatten([
+                codesToAdd.map { PromoCodeModel(code: $0, offerId: modelId) }.create(on: req.db),
+            ])
+        }
 //        var future = req.eventLoop.future()
 //        if modelId != nil {
 //            future = req.eventLoop.flatten([
