@@ -22,7 +22,7 @@ final class PromoCodeModule: ViperModule {
 
     func boot(_ app: Application) throws {
         app.databases.middleware.use(MetadataModelMiddleware<PromoOfferModel>())
-        app.databases.middleware.use(MetadataModelMiddleware<PromoCodeModel>())
+//        app.databases.middleware.use(MetadataModelMiddleware<PromoCodeModel>())
         
         ///install
         app.hooks.register("user-permission-install", use: userPermissionInstallHook)

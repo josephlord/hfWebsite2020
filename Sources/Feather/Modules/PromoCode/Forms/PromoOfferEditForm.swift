@@ -40,7 +40,7 @@ final class PromoOfferEditForm: ModelForm {
         field.validators = [FormField<String>.isValidDate]
         return field
     }()
-    var codes = FormField<String>(key: "addCodes")
+    var codes = FormField<String>(key: "codes")
     var notification: String?
     var codeCount: Int?
     
@@ -68,8 +68,7 @@ final class PromoOfferEditForm: ModelForm {
             metadataFuture = Model.findMetadata(reference: id, on: req.db).map { [unowned self] in metadata = $0 }
             codeCountfuture = PromoCodeModel
                 .query(on: req.db)
-                .join(parent: \.$offer)
-//                .filter(PromoOfferModel.self, \.$id == id)
+                .filter(\.$offer == id)
                 .count()
                 .map { [unowned self] in codeCount = $0 }
         }
@@ -96,37 +95,19 @@ final class PromoOfferEditForm: ModelForm {
     }
     
     func didSave(req: Request, model: Model) -> EventLoopFuture<Void> {
-        var future = req.eventLoop.future()
+        let future = req.eventLoop.future()
         
         guard let modelId = model.id else { return future }
         let codesToAdd = codes.value?.split(separator: ",")
+            .lazy
             .filter { !$0.isEmpty }
             .map { String($0) } ?? []
-            //.map { PromoCodeModel(code: $0, offer: model.id)}
-//        if !codesToAdd.isEmpty {
-//            future = req.eventLoop.flatten([
-//                output.$codes.create(codesToAdd, on: req.db)
-//            ])
-//        }
-//        let models = codesToAdd.map { PromoCodeModel(code: $0, offerId: modelId) }
         return future.flatMap {
             req.eventLoop.flatten([
-                codesToAdd.map { PromoCodeModel(code: $0, offerId: modelId) }.create(on: req.db),
+                req.db.transaction { db in
+                    codesToAdd.map { PromoCodeModel(code: $0, offerId: modelId) }.create(on: db)
+                },
             ])
         }
-//        var future = req.eventLoop.future()
-//        if modelId != nil {
-//            future = req.eventLoop.flatten([
-//                BlogPostCategoryModel.query(on: req.db).filter(\.$post.$id == modelId!).delete(),
-//                BlogPostAuthorModel.query(on: req.db).filter(\.$post.$id == modelId!).delete(),
-//            ])
-//        }
-//
-//        return future.flatMap { [unowned self] in
-//            req.eventLoop.flatten([
-//                categories.values.map { BlogPostCategoryModel(postId: model.id!, categoryId: $0) }.create(on: req.db),
-//                authors.values.map { BlogPostAuthorModel(postId: model.id!, authorId: $0) }.create(on: req.db),
-//            ])
-//        }
     }
 }
