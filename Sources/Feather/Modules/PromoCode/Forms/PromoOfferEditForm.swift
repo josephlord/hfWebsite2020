@@ -6,6 +6,7 @@
 //
 
 import FeatherCore
+import Fluent
 
 extension FormField where Value == String {
 
@@ -66,11 +67,16 @@ final class PromoOfferEditForm: ModelForm {
         var codeCountfuture = req.eventLoop.future()
         if let id = modelId {
             metadataFuture = Model.findMetadata(reference: id, on: req.db).map { [unowned self] in metadata = $0 }
-            codeCountfuture = PromoCodeModel
-                .query(on: req.db)
-                .filter(\.$offer == id)
-                .count()
-                .map { [unowned self] in codeCount = $0 }
+            codeCountfuture = Model.find(id, on: req.db)
+                .optionalFlatMap { offer in
+                    offer.$codes
+                    .query(on: req.db)
+                    .count()
+                }
+                .map { [unowned self] in
+                    codeCount = $0
+                    notification = "This offer has \($0.map { $0.description} ?? "nil") codes available."
+            }
         }
         return req.eventLoop.flatten([
             metadataFuture,
@@ -90,6 +96,7 @@ final class PromoOfferEditForm: ModelForm {
         output.expiry = expiry.dateValue ?? Date()
     }
 
+    
     func willSave(req: Request, model: Model) -> EventLoopFuture<Void> {
         return req.eventLoop.future()
     }
@@ -105,8 +112,17 @@ final class PromoOfferEditForm: ModelForm {
         return future.flatMap {
             req.eventLoop.flatten([
                 req.db.transaction { db in
-                    codesToAdd.map { PromoCodeModel(code: $0, offerId: modelId) }.create(on: db)
+                    codesToAdd
+                        .map { PromoCodeModel(code: $0, offerId: modelId) }
+                        .create(on: db)
                 },
+//                req.db.transaction { db in
+//                    PromoCodeModel
+//                        .query(on: db)
+//                        .filter("offer_id" == modelId)
+//                        .count()
+//                        .map { notification = "\($0) Promo codes available"; return () }
+//                },
             ])
         }
     }
