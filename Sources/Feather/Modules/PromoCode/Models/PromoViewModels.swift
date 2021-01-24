@@ -50,8 +50,6 @@ struct PromoOffer : Codable {
         name = model.name
         description = model.description
         expiry = model.expiry
-        availableCodes = 0 // TODO count offer codes
+        availableCodes = model.countCount
     }
-    
-    
 }

@@ -37,6 +37,10 @@ tr {
         #inline("Admin/SortLink")
     </th>
 
+    <th class="td:left m:h:s td:compact:col2">
+        Codes
+    </th>
+
     #if((table.edit ?? true) && UserHasPermission(table.key + ".update")):
     <th class="td:center td:compact:hidden">Edit</th>
     #endif
@@ -74,6 +78,15 @@ tr {
                 </a>
             #else:
                 #Date(timeStamp: item.expiry, fixedFormat: $app.dateFormats.full, timeZone: $app.timezone)
+            #endif
+        </td>
+        <td class="td:left m:h:s td:compact:col2 td:compact:separator">
+            #if(UserHasPermission(table.key + ".get")):
+                <a href="#($req.url.path)#(item.id)/">
+                    #(item.availableCodes)
+                </a>
+            #else:
+            #(item.availableCodes)
             #endif
         </td>
         

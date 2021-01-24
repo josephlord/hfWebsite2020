@@ -44,6 +44,13 @@ final class PromoOfferModel: ViperModel {
     }
 }
 
+extension PromoOfferModel {
+    
+    var countCount: Int {
+        self.codes.count
+    }
+}
+
 extension PromoOfferModel : MetadataRepresentable {
     var metadata: Metadata {
         .init(slug: (Self.name + "/" + name).slugify(), title: name, excerpt: description, date: expiry)
@@ -57,7 +64,13 @@ extension PromoOfferModel: LeafDataRepresentable{
             "name": name,
             "description": description,
             "expiry": expiry,
-//            "codeCount": self.$codes.count
+            "availableCodes": self.codes.count
         ])
     }
 }
+
+//extension QueryBuilder where Model : PromoCodeModel {
+//    func joinCodeCount() -> QueryBuilder<PromoCodeModel> {
+//        
+//    }
+//}

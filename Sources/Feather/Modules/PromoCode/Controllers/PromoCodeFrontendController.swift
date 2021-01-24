@@ -7,6 +7,7 @@
 
 import FeatherCore
 import Fluent
+import Vapor
 
 final class PromoOfferAdminController : ViperAdminViewController {
     typealias Module = PromoCodeModule
@@ -25,7 +26,9 @@ final class PromoOfferAdminController : ViperAdminViewController {
     }
     
     func beforeListQuery(req: Request, queryBuilder: QueryBuilder<PromoOfferModel>) -> QueryBuilder<PromoOfferModel> {
-        Model.query(on: req.db).joinMetadata()
+        return Model.query(on: req.db)
+            .joinMetadata()
+            .with(\.$codes)
     }
 
     func listQuery(order: FieldKey, sort: ListSort, queryBuilder: QueryBuilder<PromoOfferModel>, req: Request) -> QueryBuilder<PromoOfferModel> {
@@ -47,6 +50,14 @@ final class PromoOfferAdminController : ViperAdminViewController {
 //    func findBy(_ id: UUID, on db: Database) -> EventLoopFuture<Model> {
 //        Model.findWithCategoriesAndAuthorsBy(id: id, on: db).unwrap(or: Abort(.notFound, reason: "Post not found"))
 //    }
+    
+    internal func findBy(_ id: UUID, on: Database) -> EventLoopFuture<PromoOfferModel> {
+        PromoOfferModel.query(on: on)
+            .filter(\.$id == id)
+            .with(\PromoOfferModel.$codes)
+            .first()
+            .unwrap(or: Vapor.Abort(.notFound))
+    }
 
     func afterCreate(req: Request, form: CreateForm, model: Model) -> EventLoopFuture<Model> {
         findBy(model.id!, on: req.db)
