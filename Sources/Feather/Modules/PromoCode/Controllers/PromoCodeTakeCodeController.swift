@@ -19,12 +19,25 @@ final class PromoCodeTakeCodeController {
     func get(to request: Request) -> EventLoopFuture<PromoCodeOffer> {
         let name = request.parameters.get("offerName") ?? ""
         return request.db.transaction { db in
-            PromoOfferModel.query(on: db)
-                .filter(\.$name == name)
-                .first()
+            PromoCodeModel.query(on: db)
+                .join(parent: \.$offer)
+                .filter(PromoOfferModel.self, \.$name == name)
+                .random()
                 .unwrap(or: Vapor.Abort(.notFound))
-                .map { _ in PromoCodeOffer(code: "abc", offerName: "Dummy offer", offerDescription: "Offer description", offerExpiry: Date()) }
-//                .map { Response(headers: ["content-type":"application/json"], body: Response.Body())}
+                .map {
+                    let promoCode = $0
+                    let offer = try! $0.joined(PromoOfferModel.self)
+                    return PromoCodeOffer(
+                        code: promoCode.code,
+                        offerName: offer.name,
+                        offerDescription: offer.description,
+                                offerExpiry: offer.expiry)
+                }
+                .flatMap { pCO in
+                    PromoCodeModel.query(on: db)
+                        .filter(\.$code == pCO.code)
+                        .delete(force: true).map { pCO }
+                }
         }
     }
 }
