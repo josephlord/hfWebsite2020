@@ -53,3 +53,22 @@ struct PromoOffer : Codable {
         availableCodes = model.countCount
     }
 }
+
+struct PromoCodeOffer : Content {
+    
+    var code: String
+    var offerName: String
+    var offerDescription: String
+    var offerExpiry: Date
+    
+    internal init(code: String, offerName: String, offerDescription: String, offerExpiry: Date) {
+        self.code = code
+        self.offerName = offerName
+        self.offerDescription = offerDescription
+        self.offerExpiry = offerExpiry
+    }
+}
+
+extension PromoCodeOffer  {
+
+}

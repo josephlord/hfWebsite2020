@@ -12,7 +12,7 @@ final class PromoCodeRouter: ViperRouter {
 //    let controller = PromoCodeFrontendController()
 
     let offerAdmin = PromoOfferAdminController()
-    //let offerApi = PromoOfferApiController()
+    let offerApi = PromoCodeTakeCodeController()
     
     func adminRoutesHook(args: HookArguments) {
         let routes = args["routes"] as! RoutesBuilder
@@ -22,14 +22,22 @@ final class PromoCodeRouter: ViperRouter {
         offerAdmin.setupRoutes(on: modulePath, as: PromoOfferModel.pathComponent)
         
     }
-
     
-//    func publicApiRoutesHook(args: HookArguments) {
-//        let routes = args["routes"] as! RoutesBuilder
-//        
-//        let modulePath = routes.grouped(PromoCodeModule.pathComponent)
+    func publicApiRoutesHook(args: HookArguments) {
+        let routes = args["routes"] as! RoutesBuilder
+        
+        let modulePath = routes.grouped(PromoCodeModule.pathComponent)
+        
+        offerApi.setupGetRoute(on: modulePath)
+        
 //
-//        let offerPath = modulePath.grouped(PromoOfferModel.pathComponent)
-//        offerApi.setupGetRoute(on: offerPath)
-//    }
+//        modulePath.add(
+//            Route(
+//                method: .GET,
+//                path: ["code/:offerName/take/"],
+//                responder: offerApi,
+//                requestType: ClientRequest.Type.self,
+//                responseType: PromoCodeOffer.self))
+        //offerApi.setupGetRoute(on: offerPath)
+    }
 }

@@ -15,9 +15,7 @@ final class PromoCodeModule: ViperModule {
     var router: ViperRouter? = PromoCodeRouter()
     
     static var bundleUrl: URL? {
-        // Change to this when made into a package
         Bundle.module.resourceURL?.appendingPathComponent("Bundle")
-        //URL(string: "file:///Users/josephl/hf/website/feather/Sources/Feather/Modules/PromoCode/Bundle")!
     }
 
     func boot(_ app: Application) throws {
@@ -29,6 +27,7 @@ final class PromoCodeModule: ViperModule {
         
         /// routes
         app.hooks.register("admin", use: (router as! PromoCodeRouter).adminRoutesHook)
+        app.hooks.register("public-api", use: (router as! PromoCodeRouter).publicApiRoutesHook)
         
         app.hooks.register("leaf-admin-menu", use: leafAdminMenuHook)
     }
