@@ -37,7 +37,9 @@ let package = Package(
         .package(url: "https://github.com/FeatherCMS/markdown-module", from: "1.0.0-beta"),        
     ],
     targets: [
-        .target(name: "Feather", dependencies: [
+        .target(
+            name: "Feather",
+            dependencies: [
             /// drivers
             .product(name: "FluentSQLiteDriver", package: "fluent-sqlite-driver"),
             .product(name: "FluentMySQLDriver", package: "fluent-mysql-driver"),
@@ -62,7 +64,11 @@ let package = Package(
             .product(name: "MarkdownModule", package: "markdown-module"),
         ], exclude: [
             "Modules/README.md",
-        ], swiftSettings: [
+        ],
+            resources: [
+                .copy("Modules/PromoCode/Bundle/")
+            ],
+            swiftSettings: [
             .unsafeFlags(["-cross-module-optimization"], .when(configuration: .release))
         ]),
         .testTarget(name: "FeatherTests", dependencies: [
