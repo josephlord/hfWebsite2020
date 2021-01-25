@@ -47,10 +47,6 @@ final class PromoOfferAdminController : ViperAdminViewController {
 
     // MARK: - edit
     
-//    func findBy(_ id: UUID, on db: Database) -> EventLoopFuture<Model> {
-//        Model.findWithCategoriesAndAuthorsBy(id: id, on: db).unwrap(or: Abort(.notFound, reason: "Post not found"))
-//    }
-    
     internal func findBy(_ id: UUID, on: Database) -> EventLoopFuture<PromoOfferModel> {
         PromoOfferModel.query(on: on)
             .filter(\.$id == id)

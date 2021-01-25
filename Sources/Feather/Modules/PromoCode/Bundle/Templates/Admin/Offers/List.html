@@ -27,13 +27,12 @@ tr {
 
 #define(th):
     #var(link = nil)
-    <th class="td:center td:compact:hidden">Image</th>
     <th class="td:left m:h:s td:compact:col2">
-        #(link = ["key": "title", "default": true])
+        #(link = ["key": "expiry"])
         #inline("Admin/SortLink")
     </th>
     <th class="td:left m:h:s td:compact:col2">
-        #(link = ["key": "date"])
+        #(link = ["key": "title", "default": true])
         #inline("Admin/SortLink")
     </th>
 
@@ -54,7 +53,15 @@ tr {
 #define(tr):
     #for(item in list.items):
     <tr>
-
+        <td class="td:left m:h:s td:compact:col2 td:compact:separator">
+            #if(UserHasPermission(table.key + ".get")):
+                <a href="#($req.url.path)#(item.id)/">
+                    #Date(timeStamp: item.expiry, fixedFormat: $app.dateFormats.date, timeZone: $app.timezone)
+                </a>
+            #else:
+                #Date(timeStamp: item.expiry, fixedFormat: $app.dateFormats.date, timeZone: $app.timezone)
+            #endif
+        </td>
         <td class="td:left m:h:s td:compact:col2">
             #if(UserHasPermission(table.key + ".get")):
                 <a href="#($req.url.path)#(item.id)/">#(item.name)</a>
@@ -62,24 +69,7 @@ tr {
                 #(item.title)
             #endif
         </td>
-        <td class="td:left m:h:s td:compact:col2 td:compact:separator">
-            #if(UserHasPermission(table.key + ".get")):
-                <a href="#($req.url.path)#(item.id)/">
-                    #Date(timeStamp: item.metadata.date, fixedFormat: $app.dateFormats.full, timeZone: $app.timezone)
-                </a>
-            #else:
-                #Date(timeStamp: item.metadata.date, fixedFormat: $app.dateFormats.full, timeZone: $app.timezone)
-            #endif
-        </td>
-        <td class="td:left m:h:s td:compact:col2 td:compact:separator">
-            #if(UserHasPermission(table.key + ".get")):
-                <a href="#($req.url.path)#(item.id)/">
-                    #Date(timeStamp: item.expiry, fixedFormat: $app.dateFormats.full, timeZone: $app.timezone)
-                </a>
-            #else:
-                #Date(timeStamp: item.expiry, fixedFormat: $app.dateFormats.full, timeZone: $app.timezone)
-            #endif
-        </td>
+        
         <td class="td:left m:h:s td:compact:col2 td:compact:separator">
             #if(UserHasPermission(table.key + ".get")):
                 <a href="#($req.url.path)#(item.id)/">

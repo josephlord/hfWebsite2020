@@ -12,7 +12,7 @@ extension FormField where Value == String {
 
     private static let dateFormatter: DateFormatter = {
         let f = DateFormatter()
-        f.dateFormat = "y-mm-d"
+        f.dateFormat = "y-M-d"
         return f
     }()
     
@@ -116,13 +116,6 @@ final class PromoOfferEditForm: ModelForm {
                         .map { PromoCodeModel(code: $0, offerId: modelId) }
                         .create(on: db)
                 },
-//                req.db.transaction { db in
-//                    PromoCodeModel
-//                        .query(on: db)
-//                        .filter("offer_id" == modelId)
-//                        .count()
-//                        .map { notification = "\($0) Promo codes available"; return () }
-//                },
             ])
         }
     }

@@ -53,7 +53,7 @@ extension PromoOfferModel {
 
 extension PromoOfferModel : MetadataRepresentable {
     var metadata: Metadata {
-        .init(slug: (Self.name + "/" + name).slugify(), title: name, excerpt: description, date: expiry)
+        .init(slug: (Self.name + "/" + name).slugify(), title: name, excerpt: description)
     }
 }
 
@@ -68,9 +68,3 @@ extension PromoOfferModel: LeafDataRepresentable{
         ])
     }
 }
-
-//extension QueryBuilder where Model : PromoCodeModel {
-//    func joinCodeCount() -> QueryBuilder<PromoCodeModel> {
-//        
-//    }
-//}
