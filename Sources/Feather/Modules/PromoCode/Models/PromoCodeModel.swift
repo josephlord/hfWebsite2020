@@ -39,8 +39,3 @@ final class PromoCodeModel: ViperModel {
     }
 }
 
-//extension PromoCodeModel : MetadataRepresentable {
-//    var metadata: Metadata {
-//        .init(title: code, date: date, feedItem: false)
-//    }
-//}
