@@ -25,6 +25,7 @@ import AggregatorModule
 import SponsorModule
 import SwiftyModule
 import MarkdownModule
+import PromoCode
 
 /// setup metadata delegate object
 Feather.metadataDelegate = FrontendMetadataDelegate()
@@ -106,6 +107,7 @@ try feather.configure(database: dbconfig,
                         SponsorBuilder(),
                         SwiftyBuilder(),
                         MarkdownBuilder(),
+                        PromoCodeBuilder(),
                       ],
                       usePublicFileMiddleware: middleWare)
 

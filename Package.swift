@@ -34,7 +34,8 @@ let package = Package(
         .package(url: "https://github.com/FeatherCMS/aggregator-module", from: "1.0.0-beta"),
         .package(url: "https://github.com/FeatherCMS/sponsor-module", from: "1.0.0-beta"),
         .package(url: "https://github.com/FeatherCMS/swifty-module", from: "1.0.0-beta"),
-        .package(url: "https://github.com/FeatherCMS/markdown-module", from: "1.0.0-beta"),        
+        .package(url: "https://github.com/FeatherCMS/markdown-module", from: "1.0.0-beta"),
+        .package(url: "https://github.com/josephlord/feather-promocode-module", from: "0.0.4"),
     ],
     targets: [
         .target(name: "Feather", dependencies: [
@@ -60,6 +61,7 @@ let package = Package(
             .product(name: "SponsorModule", package: "sponsor-module"),
             .product(name: "SwiftyModule", package: "swifty-module"),
             .product(name: "MarkdownModule", package: "markdown-module"),
+            .product(name: "PromoCode", package: "feather-promocode-module"),
         ], exclude: [
             "Modules/README.md",
         ], swiftSettings: [
