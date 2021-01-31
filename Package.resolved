@@ -101,6 +101,15 @@
         }
       },
       {
+        "package": "feather-promocode-module",
+        "repositoryURL": "https://github.com/josephlord/feather-promocode-module",
+        "state": {
+          "branch": null,
+          "revision": "3a7c356fd4572bd6162874c32db4d36e66d6e3d4",
+          "version": "0.0.4"
+        }
+      },
+      {
         "package": "file-module",
         "repositoryURL": "https://github.com/FeatherCMS/file-module",
         "state": {
